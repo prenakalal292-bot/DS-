@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+
+void display(struct Node* head) {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("NULL\n");
+}
+
+
+void insertAtBeginning(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    new_node->data = new_data;
+    new_node->next = (*head_ref);
+    (*head_ref) = new_node;
+    printf("Inserted %d at the beginning.\n", new_data);
+}
+
+void insertAtEnd(struct Node** head_ref, int new_data) {
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    new_node->data = new_data;
+    new_node->next = NULL;
+
+    if (*head_ref == NULL) {
+        *head_ref = new_node;
+        printf("Inserted %d at the end (List was empty).\n", new_data);
+        return;
+    }
+    struct Node* last = *head_ref;
+    while (last->next != NULL) {
+        last = last->next;
+    }
+    last->next = new_node;
+    printf("Inserted %d at the end.\n", new_data);
+}
+
+void insertAtPosition(struct Node** head_ref, int position, int new_data) {
+    if (position < 1) {
+        printf("Invalid position! Position should be >= 1.\n");
+        return;
+    }
+
+    if (position == 1) {
+        insertAtBeginning(head_ref, new_data);
+        return;
+    }
+
+    struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+    if (new_node == NULL) {
+        printf("Memory allocation failed!\n");
+        return;
+    }
+    new_node->data = new_data;
+
+    struct Node* temp = *head_ref;
+
+    for (int i = 1; temp != NULL && i < position - 1; i++) {
+        temp = temp->next;
+    }
+
+
+    if (temp == NULL) {
+        printf("Position out of bounds! Could not insert %d.\n", new_data);
+        free(new_node);
+        return;
+    }
+
+
+    new_node->next = temp->next;
+    temp->next = new_node;
+    printf("Inserted %d at position %d.\n", new_data, position);
+}
+
+void freeList(struct Node* head) {
+    struct Node* temp;
+    while (head != NULL) {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+int main() {
+
+    struct Node* head = NULL;
+
+    printf("name : prerana , USN : 1BM26CS581-T\n");
+
+    printf("--- Singly Linked List Operations ---\n");
+
+
+    insertAtBeginning(&head, 10);
+    insertAtBeginning(&head, 20);
+    display(head);
+
+
+    insertAtEnd(&head, 30);
+    insertAtEnd(&head, 40);
+    display(head);
+
+
+    insertAtPosition(&head, 3, 25);
+    display(head);
+
+    insertAtPosition(&head, 1, 50);
+    display(head);
+
+    insertAtPosition(&head, 8, 99);
+
+    freeList(head);
+    return 0;
+}
